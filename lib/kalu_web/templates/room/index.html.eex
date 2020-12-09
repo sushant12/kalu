@@ -19,7 +19,7 @@
       <td><%= room.youtube_url %></td>
 
       <td>
-        <span><%= link "Show", to: Routes.room_path(@conn, :show, room.name) %></span>
+        <span><%= link "Show", to: Routes.live_path(@conn, KaluWeb.RoomLive, room.name) %></span>
       </td>
     </tr>
 <% end %>

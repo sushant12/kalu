@@ -17,10 +17,9 @@ defmodule KaluWeb.Router do
   scope "/", KaluWeb do
     pipe_through :browser
 
-    # live "/", PageLive, :index
     get "/", RoomController, :index
-    get "/room/:name", RoomController, :show
-    resources "/room", RoomController, only: [:update, :create]
+    live "/room/:name", RoomLive
+    resources "/room", RoomController, only: [:create]
     resources "/comment", CommentController, only: [:create, :index]
   end
 
