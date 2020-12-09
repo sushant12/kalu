@@ -2,39 +2,28 @@ defmodule KaluWeb.RoomController do
   use KaluWeb, :controller
 
   alias Kalu.Rooms
-  alias Kalu.Rooms.Room
 
   def index(conn, _params) do
     rooms = Rooms.list_rooms()
     render(conn, "index.html", rooms: rooms)
   end
 
-  def new(conn, _params) do
-    changeset = Rooms.change_room(%Room{})
-    render(conn, "new.html", changeset: changeset)
-  end
-
-  def create(conn, %{"room" => room_params}) do
-    case Rooms.create_room(room_params) do
+  def create(conn, _params) do
+    case Rooms.create_room(%{name: random_string()}) do
       {:ok, room} ->
         conn
-        |> put_flash(:info, "Room created successfully.")
-        |> redirect(to: Routes.room_path(conn, :show, room))
+        |> redirect(to: Routes.room_path(conn, :show, room.name))
 
-      {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "new.html", changeset: changeset)
+      {:error, _} ->
+        rooms = Rooms.list_rooms()
+        render(conn, "index.html", rooms: rooms)
     end
   end
 
-  def show(conn, %{"id" => id}) do
-    room = Rooms.get_room!(id)
-    render(conn, "show.html", room: room)
-  end
-
-  def edit(conn, %{"id" => id}) do
-    room = Rooms.get_room!(id)
+  def show(conn, %{"name" => name}) do
+    room = Rooms.get_room_by_name!(name)
     changeset = Rooms.change_room(room)
-    render(conn, "edit.html", room: room, changeset: changeset)
+    render(conn, "show.html", room: room, changeset: changeset)
   end
 
   def update(conn, %{"id" => id, "room" => room_params}) do
@@ -51,12 +40,7 @@ defmodule KaluWeb.RoomController do
     end
   end
 
-  def delete(conn, %{"id" => id}) do
-    room = Rooms.get_room!(id)
-    {:ok, _room} = Rooms.delete_room(room)
-
-    conn
-    |> put_flash(:info, "Room deleted successfully.")
-    |> redirect(to: Routes.room_path(conn, :index))
+  defp random_string() do
+    :crypto.strong_rand_bytes(5) |> Base.url_encode64()
   end
 end

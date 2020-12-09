@@ -1,5 +1,8 @@
 <h1>Listing Rooms</h1>
-
+<span>
+<%= form_tag(Routes.room_path(@conn, :create) ) %>
+  <input type="submit" name="submit" value="Create Room">
+</form>
 <table>
   <thead>
     <tr>
@@ -16,13 +19,9 @@
       <td><%= room.youtube_url %></td>
 
       <td>
-        <span><%= link "Show", to: Routes.room_path(@conn, :show, room) %></span>
-        <span><%= link "Edit", to: Routes.room_path(@conn, :edit, room) %></span>
-        <span><%= link "Delete", to: Routes.room_path(@conn, :delete, room), method: :delete, data: [confirm: "Are you sure?"] %></span>
+        <span><%= link "Show", to: Routes.room_path(@conn, :show, room.name) %></span>
       </td>
     </tr>
 <% end %>
   </tbody>
 </table>
-
-<span><%= link "New Room", to: Routes.room_path(@conn, :new) %></span>

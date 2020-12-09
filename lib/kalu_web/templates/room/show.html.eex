@@ -1,18 +1,1 @@
-<h1>Show Room</h1>
-
-<ul>
-
-  <li>
-    <strong>Name:</strong>
-    <%= @room.name %>
-  </li>
-
-  <li>
-    <strong>Youtube url:</strong>
-    <%= @room.youtube_url %>
-  </li>
-
-</ul>
-
-<span><%= link "Edit", to: Routes.room_path(@conn, :edit, @room) %></span>
-<span><%= link "Back", to: Routes.room_path(@conn, :index) %></span>
+<%= render "form.html", Map.put(assigns, :action, Routes.room_path(@conn, :update, @room)) %>
