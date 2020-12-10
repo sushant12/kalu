@@ -6,21 +6,17 @@
 <table>
   <thead>
     <tr>
-      <th>Name</th>
-      <th>Youtube url</th>
-
       <th></th>
     </tr>
   </thead>
   <tbody>
 <%= for room <- @rooms do %>
     <tr>
-      <td><%= room.name %></td>
-      <td><%= room.youtube_url %></td>
-
       <td>
-        <span><%= link "Show", to: Routes.live_path(@conn, KaluWeb.RoomLive, room.name) %></span>
-      </td>
+        <%= link to: Routes.live_path(@conn, KaluWeb.RoomLive, room.name) do %>
+          <%= img_tag("https://img.youtube.com/vi/#{room.youtube_video_id}/0.jpg")%>
+        <% end %>
+      <td>
     </tr>
 <% end %>
   </tbody>

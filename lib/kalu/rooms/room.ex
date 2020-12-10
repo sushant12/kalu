@@ -3,9 +3,10 @@ defmodule Kalu.Rooms.Room do
   import Ecto.Changeset
   alias Kalu.Comments.Comment
 
+  @youtube_url_regex ~r/http(s)?:\/\/www\.youtube\.com\/watch\?v=/
   schema "rooms" do
     field :name, :string
-    field :youtube_url, :string
+    field :youtube_video_id, :string
     has_many :comments, Comment
     timestamps()
   end
@@ -19,7 +20,19 @@ defmodule Kalu.Rooms.Room do
 
   def update_changeset(room, attrs) do
     room
-    |> cast(attrs, [:youtube_url])
-    |> validate_required([:youtube_url])
+    |> cast(attrs, [:youtube_video_id])
+    |> validate_required([:youtube_video_id])
+    |> validate_format(:youtube_video_id, @youtube_url_regex)
+    |> extract_video_id()
   end
+
+  defp extract_video_id(
+         %Ecto.Changeset{valid?: true, changes: %{youtube_video_id: youtube_video_id}} = changeset
+       ) do
+    change(changeset, %{
+      youtube_video_id: String.replace(youtube_video_id, @youtube_url_regex, "")
+    })
+  end
+
+  defp extract_video_id(changeset), do: changeset
 end

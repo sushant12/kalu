@@ -9,7 +9,7 @@ defmodule Kalu.Rooms do
   alias Kalu.Rooms.Room
 
   @doc """
-  Returns the list of rooms.
+  Returns the list of rooms whose youtube video id is not empty.
 
   ## Examples
 
@@ -18,7 +18,8 @@ defmodule Kalu.Rooms do
 
   """
   def list_rooms do
-    Repo.all(Room)
+    query = from r in Room, where: r.youtube_video_id != ""
+    Repo.all(query)
   end
 
   @doc """

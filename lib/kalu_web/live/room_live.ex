@@ -5,7 +5,6 @@ defmodule KaluWeb.RoomLive do
   @impl true
   def mount(%{"name" => name}, _session, socket) do
     room = Rooms.get_room_by_name!(name)
-
     {:ok, assign(socket, room: room, changeset: Rooms.change_room(room))}
   end
 
@@ -13,9 +12,9 @@ defmodule KaluWeb.RoomLive do
   def handle_event("save", %{"room" => %{"youtube_url" => youtube_url}}, socket) do
     case socket.assigns.params["name"]
          |> Rooms.get_room_by_name!()
-         |> Rooms.update_room(%{"youtube_url" => youtube_url}) do
-      {:ok, _} ->
-        {:noreply, socket |> put_flash(:info, "Created")}
+         |> Rooms.update_room(%{"youtube_video_id" => youtube_url}) do
+      {:ok, room} ->
+        {:noreply, assign(socket, :room, room)}
 
       {:error, _changeset} ->
         {:noreply, socket |> put_flash(:error, "something went wrong")}
