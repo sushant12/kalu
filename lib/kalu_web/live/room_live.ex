@@ -5,6 +5,7 @@ defmodule KaluWeb.RoomLive do
   @impl true
   def mount(%{"name" => name}, _session, socket) do
     room = Rooms.get_room_by_name!(name)
+    KaluWeb.Endpoint.subscribe("room:#{room.name}")
     {:ok, assign(socket, room: room, changeset: Rooms.change_room(room))}
   end
 
@@ -14,11 +15,17 @@ defmodule KaluWeb.RoomLive do
          |> Rooms.get_room_by_name!()
          |> Rooms.update_room(%{"youtube_video_id" => youtube_url}) do
       {:ok, room} ->
+        KaluWeb.Endpoint.broadcast_from(self(), "room:#{room.name}", "video_saved", %{room: room})
         {:noreply, assign(socket, :room, room)}
 
       {:error, _changeset} ->
         {:noreply, socket |> put_flash(:error, "something went wrong")}
     end
+  end
+
+  @impl true
+  def handle_info(%{event: "video_saved", payload: state}, socket) do
+    {:noreply, assign(socket, state)}
   end
 
   @impl true
