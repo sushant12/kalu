@@ -24,6 +24,38 @@ defmodule KaluWeb.RoomLive do
   end
 
   @impl true
+  def handle_event("play_video", _params, socket) do
+    room_name = socket.assigns.params["name"]
+
+    KaluWeb.Endpoint.broadcast_from(self(), "room:#{room_name}", "video_played", %{
+      room_name: room_name
+    })
+
+    {:noreply, assign(socket, :room_name, room_name)}
+  end
+
+  @impl true
+  def handle_event("pause_video", _params, socket) do
+    room_name = socket.assigns.params["name"]
+
+    KaluWeb.Endpoint.broadcast_from(self(), "room:#{room_name}", "video_paused", %{
+      room_name: room_name
+    })
+
+    {:noreply, assign(socket, :room_name, room_name)}
+  end
+
+  @impl true
+  def handle_info(%{event: "video_played"}, socket) do
+    {:noreply, push_event(socket, "video_played", %{})}
+  end
+
+  @impl true
+  def handle_info(%{event: "video_paused"}, socket) do
+    {:noreply, push_event(socket, "video_paused", %{})}
+  end
+
+  @impl true
   def handle_info(%{event: "video_saved", payload: state}, socket) do
     {:noreply, assign(socket, state)}
   end
