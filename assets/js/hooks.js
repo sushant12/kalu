@@ -27,9 +27,9 @@ Hooks.PlayVideo = {
     })
 
     function onPlayerStateChange(event) {
-      if (event.data == 1) {
+      if (event.data == YT.PlayerState.PLAYING) {
         that.pushEvent("play_video", {})
-      } else if (event.data == 2) {
+      } else if (event.data == YT.PlayerState.PAUSED) {
         that.pushEvent("pause_video", {})
       }
     }

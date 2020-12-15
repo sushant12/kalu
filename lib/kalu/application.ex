@@ -13,6 +13,7 @@ defmodule Kalu.Application do
       KaluWeb.Telemetry,
       # Start the PubSub system
       {Phoenix.PubSub, name: Kalu.PubSub},
+      KaluWeb.Presence,
       # Start the Endpoint (http/https)
       KaluWeb.Endpoint
       # Start a worker by calling: Kalu.Worker.start_link(arg)

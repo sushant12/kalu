@@ -7,6 +7,33 @@
   </div>
 </form>
 <%=if @room.youtube_video_id do%>
-  <iframe id="video-player" width="420" height="315" src="https://www.youtube.com/embed/<%= @room.youtube_video_id %>?enablejsapi=1" phx-hook="PlayVideo">
+  <iframe id="video-player" width="100%" height="500px" src="https://www.youtube.com/embed/<%= @room.youtube_video_id %>?enablejsapi=1" phx-hook="PlayVideo">
   </iframe>
 <% end %>
+<div class="chat-box-wrapper">
+  <div class="members">
+    <h3>Members</h3>
+    <%= for user <- @users do %>
+      <%= user.name %> </br>
+    <% end %>
+  </div>
+  <div class="chat-box">
+    <div class="chat-content">
+    <ul>
+      <%=for message <- @messages do %>
+      <p> <strong><%= message.user.first_name %>: </strong><%= message.content %>
+      </p>
+      <% end %>
+    </ul>
+    </div>
+    <div class="chat-input">
+      <%= f = form_for @message, "#", phx_submit: :send_message  %>
+        <%= label f, :message %>
+        <%= textarea f, :message %>
+        <div>
+          <%= submit "Save" %>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

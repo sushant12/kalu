@@ -1,12 +1,34 @@
 defmodule KaluWeb.RoomLive do
   use KaluWeb, :live_view
   alias Kalu.Rooms
-
+  alias Kalu.Comments
+  alias KaluWeb.Presence
   @impl true
   def mount(%{"name" => name}, _session, socket) do
     room = Rooms.get_room_by_name!(name)
     KaluWeb.Endpoint.subscribe("room:#{room.name}")
-    {:ok, assign(socket, room: room, changeset: Rooms.change_room(room))}
+
+    Presence.track(self(), "room:#{room.name}", room.name, %{
+      name: :crypto.strong_rand_bytes(5) |> Base.url_encode64()
+    })
+
+    users =
+      Presence.list("room:#{room.name}")
+      |> Enum.map(fn {_topic, connected_users} ->
+        connected_users[:metas]
+      end)
+      |> List.flatten()
+
+    messages = Comments.list_comments(room.id)
+
+    {:ok,
+     assign(socket,
+       room: room,
+       changeset: Rooms.change_room(room),
+       users: users,
+       messages: messages,
+       message: Comments.change_comment(%Kalu.Comments.Comment{})
+     )}
   end
 
   @impl true
@@ -58,6 +80,20 @@ defmodule KaluWeb.RoomLive do
   @impl true
   def handle_info(%{event: "video_saved", payload: state}, socket) do
     {:noreply, assign(socket, state)}
+  end
+
+  @impl true
+  def handle_info(%{event: "presence_diff"}, socket) do
+    room_name = socket.assigns.params["name"]
+
+    users =
+      Presence.list("room:#{room_name}")
+      |> Enum.map(fn {_topic, connected_users} ->
+        connected_users[:metas]
+      end)
+      |> List.flatten()
+
+    {:noreply, assign(socket, users: users)}
   end
 
   @impl true
