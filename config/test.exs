@@ -6,10 +6,7 @@ use Mix.Config
 # to provide built-in test partitioning in CI environment.
 # Run `mix help test` for more information.
 config :kalu, Kalu.Repo,
-  username: "postgres",
-  password: "postgres",
-  database: "kalu_test#{System.get_env("MIX_TEST_PARTITION")}",
-  hostname: "localhost",
+  url: System.get_env("TEST_DATABASE_URL"),
   pool: Ecto.Adapters.SQL.Sandbox
 
 # We don't run a server during test. If one is required,

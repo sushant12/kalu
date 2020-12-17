@@ -1,0 +1,6 @@
+.git
+_build/
+priv/static/
+deps/
+assets/node_modules/
+test/
