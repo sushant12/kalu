@@ -18,7 +18,9 @@ defmodule Kalu.Rooms do
 
   """
   def list_rooms do
-    query = from r in Room, where: r.youtube_video_id != ""
+    query =
+      from r in Room, where: r.youtube_video_id != "", limit: 10, order_by: [desc: r.updated_at]
+
     Repo.all(query)
   end
 

@@ -9,7 +9,7 @@ defmodule Kalu.Comments do
   alias Kalu.Comments.Comment
 
   @doc """
-  Returns the list of comments for a room.
+  Returns the last 10 list of comments for a room.
 
   ## Examples
 
@@ -18,7 +18,9 @@ defmodule Kalu.Comments do
 
   """
   def list_comments(room_id) when is_integer(room_id) do
-    query = from c in Comment, where: c.room_id == ^room_id
+    query =
+      from c in Comment, where: c.room_id == ^room_id, limit: 10, order_by: [desc: c.inserted_at]
+
     Repo.all(query)
   end
 
