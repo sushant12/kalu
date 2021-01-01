@@ -1,6 +1,5 @@
 defmodule KaluWeb.RoomController do
   use KaluWeb, :controller
-
   alias Kalu.Rooms
 
   def index(conn, _params) do
