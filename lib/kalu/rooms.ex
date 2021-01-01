@@ -9,7 +9,7 @@ defmodule Kalu.Rooms do
   alias Kalu.Rooms.Room
 
   @doc """
-  Returns the list of rooms whose youtube video id is not empty.
+  Returns the last 10 list of rooms whose youtube video id is not empty.
 
   ## Examples
 
@@ -90,22 +90,6 @@ defmodule Kalu.Rooms do
     room
     |> Room.update_changeset(attrs)
     |> Repo.update()
-  end
-
-  @doc """
-  Deletes a room.
-
-  ## Examples
-
-      iex> delete_room(room)
-      {:ok, %Room{}}
-
-      iex> delete_room(room)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_room(%Room{} = room) do
-    Repo.delete(room)
   end
 
   @doc """
