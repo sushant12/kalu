@@ -7,7 +7,7 @@ defmodule Kalu.CommentsTest do
   describe "comments" do
     alias Kalu.Comments.Comment
 
-    @valid_attrs %{message: "some message", name: "some name"}
+    @valid_attrs %{message: Faker.String.naughty(), name: Faker.Person.name()}
     @invalid_attrs %{message: nil, name: nil}
 
     def room_fixture(attrs \\ %{}) do
@@ -27,10 +27,14 @@ defmodule Kalu.CommentsTest do
       comment
     end
 
-    test "list_comments/1 returns all comments" do
+    test "list_comments/1 returns last 10 comments of a room" do
       room = room_fixture(%{name: "test-room"})
-      comment = comment_fixture(%{room_id: room.id})
-      assert Comments.list_comments(room.id) == [comment]
+
+      Enum.each(1..20, fn _ ->
+        comment_fixture(%{room_id: room.id})
+      end)
+
+      assert Comments.list_comments(room.id) |> Enum.count() == 10
     end
 
     test "create_comment/1 with valid data creates a comment" do
