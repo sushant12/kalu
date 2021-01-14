@@ -16,14 +16,7 @@
 </div>
 <div class="container">
   <div class="row">
-    <div class="column">
-      <h3>Online</h3>
-      <ul>
-      <%= for user <- @users do %>
-        <li><%= user.name %> </li>
-      <% end %>
-      </ul>
-    </div>
+    <%= live_component(@socket, KaluWeb.OnlineUsersComponent,id: @room.id,room: @room) %>
     <div class="column">
       <div class="chat-content">
         <h3>Chat</h3>

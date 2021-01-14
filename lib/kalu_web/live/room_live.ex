@@ -2,23 +2,13 @@ defmodule KaluWeb.RoomLive do
   use KaluWeb, :live_view
   alias Kalu.Rooms
   alias Kalu.Comments
+
   alias KaluWeb.Presence
+
   @impl true
   def mount(%{"name" => name}, _session, socket) do
     room = Rooms.get_room_by_name!(name)
     KaluWeb.Endpoint.subscribe("room:#{room.name}")
-    username = :crypto.strong_rand_bytes(5) |> Base.url_encode64()
-
-    Presence.track(self(), "room:#{room.name}", room.name, %{
-      name: username
-    })
-
-    users =
-      Presence.list("room:#{room.name}")
-      |> Enum.map(fn {_topic, connected_users} ->
-        connected_users[:metas]
-      end)
-      |> List.flatten()
 
     messages = Comments.list_comments(room.id) |> Enum.reverse()
 
@@ -26,8 +16,6 @@ defmodule KaluWeb.RoomLive do
      assign(socket,
        room: room,
        changeset: Rooms.change_room(room),
-       users: users,
-       username: username,
        messages: messages,
        message: Comments.change_comment(%Kalu.Comments.Comment{})
      )}
@@ -107,7 +95,6 @@ defmodule KaluWeb.RoomLive do
 
   @impl true
   def handle_info(%{event: "message_sent", payload: state}, socket) do
-    IO.inspect(state)
     {:noreply, assign(socket, state)}
   end
 
@@ -121,6 +108,11 @@ defmodule KaluWeb.RoomLive do
         connected_users[:metas]
       end)
       |> List.flatten()
+
+    send_update(KaluWeb.OnlineUsersComponent,
+      id: socket.assigns.room.id,
+      room: socket.assigns.room
+    )
 
     {:noreply, assign(socket, users: users)}
   end
