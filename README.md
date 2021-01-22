@@ -1,6 +1,6 @@
 # Kalu
 
-Demo
+[Demo](http://akalu.herokuapp.com/)
 
 Watch youtube video together.
 
