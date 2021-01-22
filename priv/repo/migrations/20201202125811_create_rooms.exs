@@ -8,6 +8,5 @@ defmodule Kalu.Repo.Migrations.CreateRooms do
 
       timestamps()
     end
-
   end
 end
