@@ -9,16 +9,13 @@ defmodule KaluWeb.RoomLive do
   def mount(%{"name" => name}, _session, socket) do
     room = Rooms.get_room_by_name!(name)
     KaluWeb.Endpoint.subscribe("room:#{room.name}")
-    username = :crypto.strong_rand_bytes(5) |> Base.url_encode64()
-
-    messages = Comments.list_comments(room.id) |> Enum.reverse()
 
     {:ok,
      assign(socket,
        room: room,
        changeset: Rooms.change_room(room),
-       username: username,
-       messages: messages,
+       username: Faker.Person.name(),
+       messages: Comments.list_comments(room.id) |> Enum.reverse(),
        message: Comments.change_comment(%Kalu.Comments.Comment{})
      )}
   end
