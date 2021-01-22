@@ -9,6 +9,7 @@ defmodule KaluWeb.RoomLive do
   def mount(%{"name" => name}, _session, socket) do
     room = Rooms.get_room_by_name!(name)
     KaluWeb.Endpoint.subscribe("room:#{room.name}")
+    username = :crypto.strong_rand_bytes(5) |> Base.url_encode64()
 
     messages = Comments.list_comments(room.id) |> Enum.reverse()
 
@@ -16,6 +17,7 @@ defmodule KaluWeb.RoomLive do
      assign(socket,
        room: room,
        changeset: Rooms.change_room(room),
+       username: username,
        messages: messages,
        message: Comments.change_comment(%Kalu.Comments.Comment{})
      )}
@@ -58,27 +60,6 @@ defmodule KaluWeb.RoomLive do
   end
 
   @impl true
-  def handle_event("send_message", %{"comment" => message}, socket) do
-    room_name = socket.assigns.params["name"]
-
-    {:ok, comment} =
-      Comments.create_comment(%{
-        message: message["message"],
-        name: socket.assigns.username,
-        room_id: socket.assigns.room.id
-      })
-
-    messages = Comments.list_comments(socket.assigns.room.id) |> Enum.reverse()
-
-    KaluWeb.Endpoint.broadcast_from(self(), "room:#{room_name}", "message_sent", %{
-      room_name: room_name,
-      messages: messages
-    })
-
-    {:noreply, assign(socket, room_name: room_name, messages: messages)}
-  end
-
-  @impl true
   def handle_info(%{event: "video_played"}, socket) do
     {:noreply, push_event(socket, "video_played", %{})}
   end
@@ -95,6 +76,12 @@ defmodule KaluWeb.RoomLive do
 
   @impl true
   def handle_info(%{event: "message_sent", payload: state}, socket) do
+    send_update(KaluWeb.MessageComponent,
+      id: socket.assigns.room.id,
+      message: Comments.change_comment(%Kalu.Comments.Comment{}),
+      messages: Comments.list_comments(socket.assigns.room.id) |> Enum.reverse()
+    )
+
     {:noreply, assign(socket, state)}
   end
 
@@ -111,7 +98,8 @@ defmodule KaluWeb.RoomLive do
 
     send_update(KaluWeb.OnlineUsersComponent,
       id: socket.assigns.room.id,
-      room: socket.assigns.room
+      room: socket.assigns.room,
+      username: socket.assigns.username
     )
 
     {:noreply, assign(socket, users: users)}

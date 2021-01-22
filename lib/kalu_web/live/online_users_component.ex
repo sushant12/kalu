@@ -18,10 +18,8 @@ defmodule KaluWeb.OnlineUsersComponent do
 
   @impl true
   def update(assigns, socket) do
-    username = :crypto.strong_rand_bytes(5) |> Base.url_encode64()
-
     Presence.track(self(), "room:#{assigns.room.name}", assigns.room.name, %{
-      name: username
+      name: assigns.username
     })
 
     users =
@@ -31,6 +29,6 @@ defmodule KaluWeb.OnlineUsersComponent do
       end)
       |> List.flatten()
 
-    {:ok, assign(socket, users: users)}
+    {:ok, socket |> assign(users: users)}
   end
 end
