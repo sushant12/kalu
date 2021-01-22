@@ -1,6 +1,6 @@
 <div id="room-name" data-room-name="<%= @room.name %>"></div>
 <div class="container">
-  <%= f = form_for @changeset, "#", phx_submit: :save  %>
+  <%= f = form_for @changeset, "#", phx_submit: :save, id: "url-form" %>
     <%= label f, :youtube_url %>
     <%= text_input f, :youtube_url %>
     <div>

@@ -5,7 +5,7 @@ defmodule KaluWeb.OnlineUsersComponent do
   @impl true
   def render(assigns) do
     ~L"""
-    <div class="column">
+    <div class="column" id="online-users">
       <h3>Online</h3>
       <ul>
       <%= for user <- @users do %>

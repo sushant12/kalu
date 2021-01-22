@@ -8,12 +8,13 @@ defmodule KaluWeb.MessageComponent do
     <div class="chat-content">
       <h3>Chat</h3>
       <%= for message <- @messages do %>
-        <%= message.name %>:  <%= message.message %>
-        <br/>
+        <div class="message">
+          <%= message.name %>:  <%= message.message %>
+        </div>
       <% end %>
     </div>
     <div class="chat-input">
-      <%= f = form_for @message, "#", phx_target: @myself, phx_submit: :send_message  %>
+      <%= f = form_for @message, "#", phx_target: @myself, phx_submit: :send_message, id: "chat-form"%>
         <%= textarea f, :message %>
         <div>
           <%= submit "Send" %>
