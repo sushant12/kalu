@@ -16,30 +16,9 @@
 </div>
 <div class="container">
   <div class="row">
+    <%= live_component(@socket, KaluWeb.OnlineUsersComponent,id: @room.id, room: @room, username: @username) %>
     <div class="column">
-      <h3>Online</h3>
-      <ul>
-      <%= for user <- @users do %>
-        <li><%= user.name %> </li>
-      <% end %>
-      </ul>
-    </div>
-    <div class="column">
-      <div class="chat-content">
-        <h3>Chat</h3>
-        <%= for message <- @messages do %>
-          <%= message.name %>:  <%= message.message %>
-          <br/>
-        <% end %>
-      </div>
-      <div class="chat-input">
-        <%= f = form_for @message, "#", phx_submit: :send_message  %>
-          <%= textarea f, :message %>
-          <div>
-            <%= submit "Send" %>
-          </div>
-        </form>
-      </div>
+    <%= live_component(@socket, KaluWeb.MessageComponent,id: @room.id, room: @room, username: @username, message: @message, messages: @messages) %>
     </div>
   </div>
 </div>
